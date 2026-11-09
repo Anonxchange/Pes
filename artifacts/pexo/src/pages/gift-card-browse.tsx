@@ -9,7 +9,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useGiftCardProducts, useGiftCardCategories, useGiftCardCountries } from "@/hooks/use-reloadly";
-import { mapProducts, ProductCardGrid } from "@/pages/gift-cards";
+import { mapProducts, ProductCardGrid } from "@/components/gift-card-browse-cards";
 
 // ── Sidebar (shared with main page, but locally defined here to avoid circular imports) ──
 const STATIC_SIDEBAR = [
