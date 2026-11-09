@@ -37,6 +37,7 @@ _Describe the high-level user-facing capabilities of this app once they exist._
 
 - Preserve existing page visuals and content when migrating HTML; do not invent a new design.
 - Use React + TypeScript JSX, not iframes or unsafe HTML injection.
+- For homepage interactions, do not add external CDN scripts or new third-party packages; use existing local dependencies or browser-native APIs.
 
 ## Gotchas
 

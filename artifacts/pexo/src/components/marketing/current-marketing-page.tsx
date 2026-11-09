@@ -1,5 +1,8 @@
 import { useEffect, useRef, type MouseEvent } from "react";
 import lottie from "lottie-web";
+import { setupHomepageNativeInteractions } from "./homepage-native-interactions";
+
+import "./homepage-native-interactions.css";
 
 type CurrentMarketingPageProps = {
   page: string;
@@ -125,6 +128,9 @@ export function CurrentMarketingPage({ page, children }: CurrentMarketingPagePro
 
     const animations: ReturnType<typeof lottie.loadAnimation>[] = [];
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const homepageCleanup =
+      page === "home" ? setupHomepageNativeInteractions(root, reducedMotion) : undefined;
+
     root.querySelectorAll<HTMLElement>('[data-animation-type="lottie"][data-src]').forEach((element) => {
       const source = element.dataset.src;
       if (!source) return;
@@ -146,24 +152,26 @@ export function CurrentMarketingPage({ page, children }: CurrentMarketingPagePro
       return Number.parseFloat(style.opacity) < 0.99 || (style.filter && style.filter !== "none");
     });
 
+    let observer: IntersectionObserver | undefined;
     if (reducedMotion || !("IntersectionObserver" in window)) {
       hidden.forEach(revealElement);
     } else {
-      const observer = new IntersectionObserver((entries) => {
+      const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
           revealElement(entry.target as HTMLElement);
-          observer.unobserve(entry.target);
+          revealObserver.unobserve(entry.target);
         });
       }, { threshold: 0.12 });
-      hidden.forEach((element) => observer.observe(element));
-      return () => {
-        observer.disconnect();
-        animations.forEach((animation) => animation.destroy());
-      };
+      observer = revealObserver;
+      hidden.forEach((element) => revealObserver.observe(element));
     }
 
-    return () => animations.forEach((animation) => animation.destroy());
+    return () => {
+      observer?.disconnect();
+      animations.forEach((animation) => animation.destroy());
+      homepageCleanup?.();
+    };
   }, [page]);
 
   return (
